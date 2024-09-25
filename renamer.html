@@ -48,18 +48,14 @@
   </div>
 
 
-<iframe id="embeddedFrame" src="pre-renamer.html"></iframe>
+<iframe id="embeddedFrame" sandbox="allow-scripts allow-same-origin allow-forms" src="pre-renamer.html"></iframe>
  <script>
-    // Function to resize the iframe dynamically and remove scrollbars
     function resizeIframe() {
       var iframe = document.getElementById('embeddedFrame');
       var iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
       
-      // Ensure the iframe adjusts its height to match the content
-      iframe.style.height = iframeDoc.body.scrollHeight + 'px';
-      
-      // Forcefully hide scrollbars within the iframe
-      iframeDoc.body.style.overflow = 'hidden';
+      // Dynamically adjust the iframe's height to match the content's full height
+      iframe.style.height = iframeDoc.documentElement.scrollHeight + 'px';
     }
 
     // Adjust iframe height after the content has loaded
@@ -67,7 +63,7 @@
       resizeIframe();
     };
 
-    // Re-adjust the height if the iframe content resizes dynamically
+    // Re-adjust the height whenever the window resizes or content changes
     window.addEventListener('resize', resizeIframe);
   </script>
 
