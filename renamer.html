@@ -48,21 +48,22 @@
   </div>
 
 
-<iframe id="embeddedFrame" src="pre-renamer.html"></iframe>
-<script>
-    function resizeIframe() {
-      var iframe = document.getElementById('embeddedFrame');
-      iframe.style.height = iframe.contentWindow.document.body.scrollHeight + 'px';
-    }
+  <!-- Iframe with ID for JavaScript targeting -->
+    <iframe id="dynamicIframe" src="iframe-content.html" style="width: 100%; border: none;" scrolling="no"></iframe>
 
-    // Adjust iframe height after the content has loaded
-    document.getElementById('embeddedFrame').onload = function() {
-      resizeIframe();
-    };
+    <!-- JavaScript to adjust iframe height based on messages from the iframe -->
+    <script>
+        window.addEventListener('message', function(event) {
+            // Optional: Verify event.origin for security
+            // Example:
+            // if (event.origin !== 'https://your-domain.com') return;
 
-    // Re-adjust the height if the iframe content resizes dynamically
-    window.addEventListener('resize', resizeIframe);
-  </script>
+            const iframe = document.getElementById('dynamicIframe');
+            if (iframe && typeof event.data === 'number') {
+                iframe.style.height = event.data + 'px';
+            }
+        }, false);
+    </script>
 
 
   
