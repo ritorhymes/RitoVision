@@ -156,7 +156,7 @@
     </style>
 </head>
 <body>
-
+ <div class="content">
 <div class="container">
     <h1>Batch File Renamer</h1>
     
@@ -204,7 +204,7 @@
         <span id="status">Preparing files...</span>
     </div>
 </div>
-
+</div>
 <!-- Include JSZip from CDN -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.0/jszip.min.js"></script>
 <!-- Include FileSaver from CDN -->
@@ -418,6 +418,22 @@
         warningMessage.style.display = 'none';
         fileList.innerHTML = "";
     });
+
+        function sendHeight() {
+            const height = document.body.scrollHeight;
+            window.parent.postMessage(height, '*'); // Replace '*' with the parent origin for security
+        }
+
+        // Send height on page load
+        window.addEventListener('load', sendHeight);
+
+        // Observe changes to the body and send updated height
+        const resizeObserver = new ResizeObserver(entries => {
+            sendHeight();
+        });
+
+        resizeObserver.observe(document.body);
+
 </script>
 
 </body>
