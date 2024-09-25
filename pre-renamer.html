@@ -4,9 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex, nofollow">
-    <title>Batch File Renamer</title>
+    <title>Batch File Renamer and Zipper</title>
     
+    <!-- Link to Google Fonts: Oswald (Alternative to Agency FB) -->
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;700&display=swap" rel="stylesheet">
+    <title>Batch File Renamer</title>
+
     <style>
+        /* Apply the Oswald font to the entire document */
+        body {
+            font-family: 'Oswald', sans-serif;
        @font-face {
             font-family: 'AgencyFB';
             src: url('fonts/AGENCYB.TTF') format('truetype');
@@ -22,7 +29,6 @@
             padding: 20px;
         }
 
-
         h1 {
             text-align: center;
             color: #333;
@@ -30,9 +36,11 @@
 
         /* Description Text Styling */
         .description {
+            text-align: center;
             text-align: left;
             margin-top: 10px;
             margin-bottom: 20px;
+            color: #555;
             color: black;
             line-height: 1.5;
         }
@@ -156,39 +164,39 @@
     </style>
 </head>
 <body>
- <div class="content">
+
 <div class="container">
-    <h1>Batch File Renamer</h1>
-    
+    <h1>Batch File Renamer and Zipper</h1>
+
     <!-- Description Text -->
     <div class="description">
         Description: This tool allows you to upload any type of file you want, multiple files or an entire folder then rename everything all at once and download it as a zip folder for you to use. You can enter in the fields below words you would like to include, as relevant, and they will be strung together into a file name for each file (and the folder itself). Each file will have a different number at the end of its name according to its sequence to distinguish it. For example, RitoVision_photoreel-1.png, RitoVision_photoreel-2.png etc.
     </div>
-    
+
     <div class="input-group">
         <label for="creator">Creator Name:</label>
         <input type="text" id="creator" placeholder="Enter creator name">
     </div>
-    
+
     <div class="input-group">
         <label for="event">Event:</label>
         <input type="text" id="event" placeholder="Enter event name">
     </div>
-    
+
     <div class="input-group">
         <label for="date">Date:</label>
         <input type="text" id="date" placeholder="Enter date (e.g., 2024-04-27)">
     </div>
-    
+
     <div class="input-group">
         <label for="misc">Misc:</label>
         <input type="text" id="misc" placeholder="Enter any miscellaneous info">
     </div>
-    
+
     <div id="warning-message">At least one field must be filled in.</div>
-    
+
     <div id="uploaded-folder-name"></div>
-    
+
     <div id="drop-area">
         <p>Drag and drop your files here</p>
         <p>or</p>
@@ -196,15 +204,15 @@
         <input type="file" id="file-input" multiple>
         <div id="file-list"></div>
     </div>
-    
+
     <button class="button" id="process-button" disabled>Rename and Download ZIP</button>
     <button class="button" id="reset-button">Reset</button>
-    
+
     <div id="progress">
         <span id="status">Preparing files...</span>
     </div>
 </div>
-</div>
+
 <!-- Include JSZip from CDN -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.0/jszip.min.js"></script>
 <!-- Include FileSaver from CDN -->
@@ -418,22 +426,6 @@
         warningMessage.style.display = 'none';
         fileList.innerHTML = "";
     });
-
-        function sendHeight() {
-            const height = document.body.scrollHeight;
-            window.parent.postMessage(height, '*'); // Replace '*' with the parent origin for security
-        }
-
-        // Send height on page load
-        window.addEventListener('load', sendHeight);
-
-        // Observe changes to the body and send updated height
-        const resizeObserver = new ResizeObserver(entries => {
-            sendHeight();
-        });
-
-        resizeObserver.observe(document.body);
-
 </script>
 
 </body>
