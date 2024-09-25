@@ -6,10 +6,8 @@
     <meta name="robots" content="noindex, nofollow">
     <title>Batch File Renamer and Zipper</title>
     
-    <title>Batch File Renamer</title>
-
     <style>
-       @font-face {
+        @font-face {
             font-family: 'AgencyFB';
             src: url('fonts/AGENCYB.TTF') format('truetype');
             font-weight: normal;
@@ -17,7 +15,7 @@
             font-display: swap;
         }
          
- body {
+        body {
             font-family: 'AgencyFB', sans-serif;
             background-color: #f2f2f2;
             margin: 0;
@@ -34,7 +32,6 @@
             text-align: left;
             margin-top: 10px;
             margin-bottom: 20px;
-            color: #555;
             color: black;
             line-height: 1.5;
         }
@@ -62,14 +59,14 @@
             box-sizing: border-box;
             border: 1px solid #ccc;
             border-radius: 4px;
-            font-family: 'Oswald', sans-serif;
+            font-family: 'AgencyFB', sans-serif;
         }
         #drop-area {
-            border: 2px dashed #012035; /* Changed from #ffa500 to #012035 */
+            border: 2px dashed #012035;
             border-radius: 10px;
             padding: 20px;
             text-align: center;
-            color: #012035; /* Changed from #ffa500 to #012035 */
+            color: #012035;
             margin-bottom: 20px;
             transition: border-color 0.3s, background-color 0.3s;
             background-color: #fff8e1;
@@ -91,7 +88,7 @@
             margin: 0;
             padding: 5px 0;
             border-bottom: 1px solid #ccc;
-            font-family: 'Oswald', sans-serif;
+            font-family: 'AgencyFB', sans-serif;
         }
         #file-input {
             display: none;
@@ -99,7 +96,7 @@
         .button {
             display: inline-block;
             padding: 12px 25px;
-            background-color: #012035; /* Changed from #ffa500 to #012035 */
+            background-color: #012035;
             color: #fff;
             text-decoration: none;
             border: none;
@@ -108,7 +105,7 @@
             margin-right: 10px;
             font-size: 16px;
             transition: background-color 0.3s;
-            font-family: 'Oswald', sans-serif;
+            font-family: 'AgencyFB', sans-serif;
         }
         .button:hover {
             background-color: #ff8c00;
@@ -125,19 +122,19 @@
             display: block;
             margin-bottom: 5px;
             color: #333;
-            font-family: 'Oswald', sans-serif;
+            font-family: 'AgencyFB', sans-serif;
         }
         #uploaded-folder-name {
             margin-bottom: 15px;
             font-weight: bold;
             color: #333;
-            font-family: 'Oswald', sans-serif;
+            font-family: 'AgencyFB', sans-serif;
         }
         #warning-message {
             color: red;
             margin-bottom: 15px;
             display: none;
-            font-family: 'Oswald', sans-serif;
+            font-family: 'AgencyFB', sans-serif;
         }
 
         /* Responsive Styling for Mobile Devices */
@@ -192,10 +189,10 @@
     <div id="uploaded-folder-name"></div>
 
     <div id="drop-area">
-        <p>Drag and drop your files here</p>
+        <p>Drag and drop your files or folders here</p>
         <p>or</p>
         <button class="button" id="upload-button">Select Files</button>
-        <input type="file" id="file-input" multiple>
+        <input type="file" id="file-input" webkitdirectory multiple>
         <div id="file-list"></div>
     </div>
 
@@ -258,20 +255,78 @@
     // Handle dropped files and folders
     dropArea.addEventListener('drop', handleDrop, false);
 
-    function handleDrop(e) {
+    async function handleDrop(e) {
         const dt = e.dataTransfer;
-        const selectedFiles = dt.files;
+        const items = dt.items;
+        let tempFiles = [];
 
-        if (selectedFiles.length > 0) {
-            files = Array.from(selectedFiles);
-            processButton.disabled = false;
-            displayFiles(files);
-            folderName = "renamed_files"; // Default folder name since directory structure isn't available
-            updateUploadedFolderName();
+        if (items && items.length > 0 && items[0].webkitGetAsEntry) {
+            // Handle folder upload
+            const traverseFileTree = (item, path = "") => {
+                return new Promise((resolve, reject) => {
+                    if (item.isFile) {
+                        item.file(file => {
+                            file.relativePath = path + file.name;
+                            tempFiles.push(file);
+                            resolve();
+                        }, reject);
+                    } else if (item.isDirectory) {
+                        const dirReader = item.createReader();
+                        dirReader.readEntries(entries => {
+                            const promises = [];
+                            for (let entry of entries) {
+                                promises.push(traverseFileTree(entry, path + item.name + "/"));
+                            }
+                            Promise.all(promises).then(resolve).catch(reject);
+                        }, reject);
+                    }
+                });
+            };
+
+            const promises = [];
+            for (let i = 0; i < items.length; i++) {
+                const item = items[i].webkitGetAsEntry();
+                if (item) {
+                    promises.push(traverseFileTree(item));
+                }
+            }
+
+            try {
+                await Promise.all(promises);
+                if (tempFiles.length > 0) {
+                    files = tempFiles;
+                    processButton.disabled = false;
+                    displayFiles(tempFiles);
+                    if (files[0].relativePath) {
+                        const pathParts = files[0].relativePath.split('/');
+                        if (pathParts.length > 1) {
+                            folderName = pathParts[0];
+                        }
+                    }
+                    updateUploadedFolderName();
+                } else {
+                    files = [];
+                    processButton.disabled = true;
+                    uploadedFolderNameDiv.textContent = "";
+                }
+            } catch (error) {
+                console.error("Error processing dropped items:", error);
+                alert("Error processing dropped items. See console for details.");
+            }
         } else {
-            files = [];
-            processButton.disabled = true;
-            uploadedFolderNameDiv.textContent = "";
+            // Handle file upload
+            const selectedFiles = dt.files;
+            if (selectedFiles.length > 0) {
+                files = Array.from(selectedFiles);
+                processButton.disabled = false;
+                displayFiles(files);
+                folderName = "renamed_files"; // Default folder name since directory structure isn't available
+                updateUploadedFolderName();
+            } else {
+                files = [];
+                processButton.disabled = true;
+                uploadedFolderNameDiv.textContent = "";
+            }
         }
     }
 
@@ -282,16 +337,73 @@
         handleFiles(fileInput.files);
     });
 
-    function handleFiles(selectedFiles) {
-        files = Array.from(selectedFiles);
-        if (files.length > 0) {
-            processButton.disabled = false;
-            displayFiles(files);
-            folderName = "renamed_files"; // Default folder name since directory structure isn't available
-            updateUploadedFolderName();
+    async function handleFiles(selectedFiles) {
+        if (fileInput.webkitdirectory) {
+            const items = fileInput.files;
+            let tempFiles = [];
+            const traverseFileTree = (item, path = "") => {
+                return new Promise((resolve, reject) => {
+                    if (item.isFile) {
+                        item.file(file => {
+                            file.relativePath = path + file.name;
+                            tempFiles.push(file);
+                            resolve();
+                        }, reject);
+                    } else if (item.isDirectory) {
+                        const dirReader = item.createReader();
+                        dirReader.readEntries(entries => {
+                            const promises = [];
+                            for (let entry of entries) {
+                                promises.push(traverseFileTree(entry, path + item.name + "/"));
+                            }
+                            Promise.all(promises).then(resolve).catch(reject);
+                        }, reject);
+                    }
+                });
+            };
+
+            const promises = [];
+            for (let i = 0; i < items.length; i++) {
+                const item = items[i].webkitGetAsEntry();
+                if (item) {
+                    promises.push(traverseFileTree(item));
+                }
+            }
+
+            try {
+                await Promise.all(promises);
+                if (tempFiles.length > 0) {
+                    files = tempFiles;
+                    processButton.disabled = false;
+                    displayFiles(tempFiles);
+                    if (files[0].relativePath) {
+                        const pathParts = files[0].relativePath.split('/');
+                        if (pathParts.length > 1) {
+                            folderName = pathParts[0];
+                        }
+                    }
+                    updateUploadedFolderName();
+                } else {
+                    files = [];
+                    processButton.disabled = true;
+                    uploadedFolderNameDiv.textContent = "";
+                }
+            } catch (error) {
+                console.error("Error processing selected items:", error);
+                alert("Error processing selected items. See console for details.");
+            }
         } else {
-            processButton.disabled = true;
-            uploadedFolderNameDiv.textContent = "";
+            // Fallback for browsers that do not support webkitdirectory
+            files = Array.from(selectedFiles);
+            if (files.length > 0) {
+                processButton.disabled = false;
+                displayFiles(files);
+                folderName = "renamed_files"; // Default folder name since directory structure isn't available
+                updateUploadedFolderName();
+            } else {
+                processButton.disabled = true;
+                uploadedFolderNameDiv.textContent = "";
+            }
         }
     }
 
@@ -308,7 +420,7 @@
         fileList.innerHTML = "";
         files.forEach(file => {
             const p = document.createElement('p');
-            p.textContent = file.name;
+            p.textContent = file.relativePath || file.name;
             fileList.appendChild(p);
         });
     }
