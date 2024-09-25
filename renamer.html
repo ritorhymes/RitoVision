@@ -1,13 +1,13 @@
-<!DOCTYPE html><!--  Last Published: Sun Sep 22 2024 02:44:22 GMT+0000 (Coordinated Universal Time)  -->
+<!DOCTYPE html>
 <html data-wf-page="66e8b234038f6db8a5661b52" data-wf-site="66c5bd247bbcc549e247711a">
 <head>
   <meta charset="utf-8">
-  <title>RitoVision | Multi-Disciplinary Visionary</title>
-  <meta content="Visionary Solution-seeking with Rito, at the intersection of Design, Technology &amp; Business Strategy" name="description">
+  <title>RitoVision | Batch File Renamer</title>
+  <meta content="A complementary tool available for renaming any type of file or folder automatically in a batch" name="description">
   <meta content="RitoVision | Multi-Disciplinary Visionary" property="og:title">
-  <meta content="Visionary Solution-seeking with Rito, at the intersection of Design, Technology &amp; Business Strategy" property="og:description">
+  <meta content="A complementary tool available for renaming any type of file or folder automatically in a batch" property="og:description">
   <meta content="RitoVision | Multi-Disciplinary Visionary" property="twitter:title">
-  <meta content="Visionary Solution-seeking with Rito, at the intersection of Design, Technology &amp; Business Strategy" property="twitter:description">
+  <meta content="A complementary tool available for renaming any type of file or folder automatically in a batch" property="twitter:description">
   <meta property="og:type" content="website">
   <meta content="summary_large_image" name="twitter:card">
   <meta content="width=device-width, initial-scale=1" name="viewport">
@@ -48,25 +48,25 @@
   </div>
 
 
-  <!-- Iframe with ID for JavaScript targeting -->
-    <iframe id="dynamicIframe" src="iframe-content.html" style="width: 100%; border: none;" scrolling="no"></iframe>
+<iframe id="embeddedFrame" sandbox="allow-scripts allow-same-origin allow-forms" src="pre-renamer.html"></iframe>
+<iframe id="embeddedFrame" src="pre-renamer.html"></iframe>
+<script>
+    function resizeIframe() {
+      var iframe = document.getElementById('embeddedFrame');
+      iframe.style.height = iframe.contentWindow.document.body.scrollHeight + 'px';
+    }
 
-    <!-- JavaScript to adjust iframe height based on messages from the iframe -->
-    <script>
-        window.addEventListener('message', function(event) {
-            // Optional: Verify event.origin for security
-            // Example:
-            // if (event.origin !== 'https://your-domain.com') return;
+    // Adjust iframe height after the content has loaded
+    document.getElementById('embeddedFrame').onload = function() {
+      resizeIframe();
+    };
 
-            const iframe = document.getElementById('dynamicIframe');
-            if (iframe && typeof event.data === 'number') {
-                iframe.style.height = event.data + 'px';
-            }
-        }, false);
-    </script>
+    // Re-adjust the height if the iframe content resizes dynamically
+    window.addEventListener('resize', resizeIframe);
+  </script>
 
 
-  
+
   <div class="footer-thing">
     <a id="w-node-_6d58e0ab-7df3-d6e7-4cb9-4e38becd8cc6-becd8cc5" data-w-id="6d58e0ab-7df3-d6e7-4cb9-4e38becd8cc6" href="index.html" aria-current="page" class="brand-3 footer-brand w-nav-brand w--current"><img src="images/RitoVision_logo_ExtraBrightlong.png" loading="lazy" width="389" sizes="(max-width: 479px) 167px, (max-width: 767px) 35.390625px, (max-width: 991px) 5vw, 8vw" alt="" srcset="images/RitoVision_logo_ExtraBrightlong-p-500.png 500w, images/RitoVision_logo_ExtraBrightlong-p-800.png 800w, images/RitoVision_logo_ExtraBrightlong-p-1080.png 1080w, images/RitoVision_logo_ExtraBrightlong-p-1600.png 1600w, images/RitoVision_logo_ExtraBrightlong-p-2000.png 2000w, images/RitoVision_logo_ExtraBrightlong.png 2500w" class="image-33 footer"></a>
     <p id="w-node-_6d58e0ab-7df3-d6e7-4cb9-4e38becd8cc8-becd8cc5" class="paragraph-16">All Rights Reserved <strong class="bold-text-2">©</strong></p>
