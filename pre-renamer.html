@@ -90,7 +90,8 @@
             border-bottom: 1px solid #ccc;
             font-family: 'AgencyFB', sans-serif;
         }
-        #file-input {
+        #file-input-files,
+        #file-input-folder {
             display: none;
         }
         .button {
@@ -106,6 +107,7 @@
             font-size: 16px;
             transition: background-color 0.3s;
             font-family: 'AgencyFB', sans-serif;
+            text-align: center;
         }
         .button:hover {
             background-color: #ff8c00;
@@ -152,6 +154,17 @@
                 margin-right: 0;
             }
         }
+
+        /* Style for the Upload Folder button with "Desktop Only" */
+        .upload-folder-container {
+            display: inline-block;
+            text-align: center;
+        }
+        .upload-folder-container .desktop-only {
+            display: block;
+            font-size: 12px;
+            color: #666;
+        }
     </style>
 </head>
 <body>
@@ -188,11 +201,22 @@
 
     <div id="uploaded-folder-name"></div>
 
+    <!-- Upload Buttons -->
     <div id="drop-area">
         <p>Drag and drop your files or folders here</p>
         <p>or</p>
-        <button class="button" id="upload-button">Select Files</button>
-        <input type="file" id="file-input" webkitdirectory multiple>
+        
+        <!-- Upload Files Button -->
+        <button class="button" id="upload-button-files">Upload Files</button>
+        <input type="file" id="file-input-files" multiple>
+
+        <!-- Upload Folder Button -->
+        <div class="upload-folder-container">
+            <button class="button" id="upload-button-folder">Upload Folder</button>
+            <span class="desktop-only">Desktop Only</span>
+            <input type="file" id="file-input-folder" webkitdirectory multiple>
+        </div>
+
         <div id="file-list"></div>
     </div>
 
@@ -210,8 +234,12 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
 
 <script>
-    const uploadButton = document.getElementById('upload-button');
-    const fileInput = document.getElementById('file-input');
+    const uploadButtonFiles = document.getElementById('upload-button-files');
+    const fileInputFiles = document.getElementById('file-input-files');
+
+    const uploadButtonFolder = document.getElementById('upload-button-folder');
+    const fileInputFolder = document.getElementById('file-input-folder');
+
     const dropArea = document.getElementById('drop-area');
     const processButton = document.getElementById('process-button');
     const resetButton = document.getElementById('reset-button');
@@ -261,7 +289,7 @@
         let tempFiles = [];
 
         if (items && items.length > 0 && items[0].webkitGetAsEntry) {
-            // Handle folder upload
+            // Handle folder upload via drag-and-drop
             const traverseFileTree = (item, path = "") => {
                 return new Promise((resolve, reject) => {
                     if (item.isFile) {
@@ -314,7 +342,7 @@
                 alert("Error processing dropped items. See console for details.");
             }
         } else {
-            // Handle file upload
+            // Handle file upload via drag-and-drop
             const selectedFiles = dt.files;
             if (selectedFiles.length > 0) {
                 files = Array.from(selectedFiles);
@@ -330,44 +358,53 @@
         }
     }
 
-    // Handle file selection via button
-    uploadButton.addEventListener('click', () => fileInput.click());
+    // Handle file selection via Upload Files button
+    uploadButtonFiles.addEventListener('click', () => fileInputFiles.click());
 
-    fileInput.addEventListener('change', () => {
-        handleFiles(fileInput.files);
+    fileInputFiles.addEventListener('change', () => {
+        handleFilesFiles(fileInputFiles.files);
     });
 
-    async function handleFiles(selectedFiles) {
-        if (fileInput.hasAttribute('webkitdirectory')) {
-            const filesArray = Array.from(selectedFiles);
-            if (filesArray.length > 0) {
-                files = filesArray;
-                processButton.disabled = false;
-                displayFiles(files);
-                if (files[0].webkitRelativePath) {
-                    const pathParts = files[0].webkitRelativePath.split('/');
-                    if (pathParts.length > 1) {
-                        folderName = pathParts[0];
-                    }
-                }
-                updateUploadedFolderName();
-            } else {
-                files = [];
-                processButton.disabled = true;
-                uploadedFolderNameDiv.textContent = "";
-            }
-        } else {
-            // Fallback for browsers that do not support webkitdirectory
+    async function handleFilesFiles(selectedFiles) {
+        if (selectedFiles.length > 0) {
             files = Array.from(selectedFiles);
-            if (files.length > 0) {
-                processButton.disabled = false;
-                displayFiles(files);
-                folderName = "renamed_files"; // Default folder name since directory structure isn't available
-                updateUploadedFolderName();
-            } else {
-                processButton.disabled = true;
-                uploadedFolderNameDiv.textContent = "";
+            processButton.disabled = false;
+            displayFiles(files);
+            folderName = "renamed_files"; // Default folder name since directory structure isn't available
+            updateUploadedFolderName();
+        } else {
+            files = [];
+            processButton.disabled = true;
+            uploadedFolderNameDiv.textContent = "";
+        }
+    }
+
+    // Handle folder selection via Upload Folder button
+    uploadButtonFolder.addEventListener('click', () => fileInputFolder.click());
+
+    fileInputFolder.addEventListener('change', () => {
+        handleFilesFolder(fileInputFolder.files);
+    });
+
+    async function handleFilesFolder(selectedFiles) {
+        if (selectedFiles.length > 0) {
+            files = [];
+            for (let file of selectedFiles) {
+                files.push(file);
             }
+            processButton.disabled = false;
+            displayFiles(files);
+            if (files[0].webkitRelativePath) {
+                const pathParts = files[0].webkitRelativePath.split('/');
+                if (pathParts.length > 1) {
+                    folderName = pathParts[0];
+                }
+            }
+            updateUploadedFolderName();
+        } else {
+            files = [];
+            processButton.disabled = true;
+            uploadedFolderNameDiv.textContent = "";
         }
     }
 
@@ -404,8 +441,10 @@
         }
 
         processButton.disabled = true;
-        uploadButton.disabled = true;
-        fileInput.disabled = true;
+        uploadButtonFiles.disabled = true;
+        uploadButtonFolder.disabled = true;
+        fileInputFiles.disabled = true;
+        fileInputFolder.disabled = true;
         resetButton.disabled = true;
         progressDiv.style.display = 'block';
         statusSpan.textContent = 'Processing files...';
@@ -480,8 +519,10 @@
 
     function resetUI() {
         processButton.disabled = true;
-        uploadButton.disabled = false;
-        fileInput.disabled = false;
+        uploadButtonFiles.disabled = false;
+        uploadButtonFolder.disabled = false;
+        fileInputFiles.disabled = false;
+        fileInputFolder.disabled = false;
         resetButton.disabled = false;
         progressDiv.style.display = 'none';
         statusSpan.textContent = 'Preparing files...';
@@ -497,7 +538,8 @@
         folderName = "renamed_files";
         uploadedFolderNameDiv.textContent = "";
         processButton.disabled = true;
-        fileInput.value = "";
+        fileInputFiles.value = "";
+        fileInputFolder.value = "";
         progressDiv.style.display = 'none';
         warningMessage.style.display = 'none';
         fileList.innerHTML = "";
