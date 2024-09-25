@@ -49,13 +49,10 @@
 
 
 <iframe id="embeddedFrame" sandbox="allow-scripts allow-same-origin allow-forms" src="pre-renamer.html"></iframe>
- <script>
+<script>
     function resizeIframe() {
       var iframe = document.getElementById('embeddedFrame');
-      var iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-      
-      // Dynamically adjust the iframe's height to match the content's full height
-      iframe.style.height = iframeDoc.documentElement.scrollHeight + 'px';
+      iframe.style.height = iframe.contentWindow.document.body.scrollHeight + 'px';
     }
 
     // Adjust iframe height after the content has loaded
@@ -63,7 +60,7 @@
       resizeIframe();
     };
 
-    // Re-adjust the height whenever the window resizes or content changes
+    // Re-adjust the height if the iframe content resizes dynamically
     window.addEventListener('resize', resizeIframe);
   </script>
 
