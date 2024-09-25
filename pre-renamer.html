@@ -266,7 +266,7 @@
                 return new Promise((resolve, reject) => {
                     if (item.isFile) {
                         item.file(file => {
-                            file.relativePath = path + file.name;
+                            file.webkitRelativePath = path + file.name;
                             tempFiles.push(file);
                             resolve();
                         }, reject);
@@ -297,8 +297,8 @@
                     files = tempFiles;
                     processButton.disabled = false;
                     displayFiles(tempFiles);
-                    if (files[0].relativePath) {
-                        const pathParts = files[0].relativePath.split('/');
+                    if (files[0].webkitRelativePath) {
+                        const pathParts = files[0].webkitRelativePath.split('/');
                         if (pathParts.length > 1) {
                             folderName = pathParts[0];
                         }
@@ -338,59 +338,23 @@
     });
 
     async function handleFiles(selectedFiles) {
-        if (fileInput.webkitdirectory) {
-            const items = fileInput.files;
-            let tempFiles = [];
-            const traverseFileTree = (item, path = "") => {
-                return new Promise((resolve, reject) => {
-                    if (item.isFile) {
-                        item.file(file => {
-                            file.relativePath = path + file.name;
-                            tempFiles.push(file);
-                            resolve();
-                        }, reject);
-                    } else if (item.isDirectory) {
-                        const dirReader = item.createReader();
-                        dirReader.readEntries(entries => {
-                            const promises = [];
-                            for (let entry of entries) {
-                                promises.push(traverseFileTree(entry, path + item.name + "/"));
-                            }
-                            Promise.all(promises).then(resolve).catch(reject);
-                        }, reject);
+        if (fileInput.hasAttribute('webkitdirectory')) {
+            const filesArray = Array.from(selectedFiles);
+            if (filesArray.length > 0) {
+                files = filesArray;
+                processButton.disabled = false;
+                displayFiles(files);
+                if (files[0].webkitRelativePath) {
+                    const pathParts = files[0].webkitRelativePath.split('/');
+                    if (pathParts.length > 1) {
+                        folderName = pathParts[0];
                     }
-                });
-            };
-
-            const promises = [];
-            for (let i = 0; i < items.length; i++) {
-                const item = items[i].webkitGetAsEntry();
-                if (item) {
-                    promises.push(traverseFileTree(item));
                 }
-            }
-
-            try {
-                await Promise.all(promises);
-                if (tempFiles.length > 0) {
-                    files = tempFiles;
-                    processButton.disabled = false;
-                    displayFiles(tempFiles);
-                    if (files[0].relativePath) {
-                        const pathParts = files[0].relativePath.split('/');
-                        if (pathParts.length > 1) {
-                            folderName = pathParts[0];
-                        }
-                    }
-                    updateUploadedFolderName();
-                } else {
-                    files = [];
-                    processButton.disabled = true;
-                    uploadedFolderNameDiv.textContent = "";
-                }
-            } catch (error) {
-                console.error("Error processing selected items:", error);
-                alert("Error processing selected items. See console for details.");
+                updateUploadedFolderName();
+            } else {
+                files = [];
+                processButton.disabled = true;
+                uploadedFolderNameDiv.textContent = "";
             }
         } else {
             // Fallback for browsers that do not support webkitdirectory
@@ -420,7 +384,7 @@
         fileList.innerHTML = "";
         files.forEach(file => {
             const p = document.createElement('p');
-            p.textContent = file.relativePath || file.name;
+            p.textContent = file.webkitRelativePath || file.name;
             fileList.appendChild(p);
         });
     }
@@ -464,7 +428,13 @@
             const newName = constructFileName(creator, eventInput, date, misc, seqNumber, extension);
             try {
                 const fileData = await file.arrayBuffer();
-                folder.file(newName, fileData);
+                if (file.webkitRelativePath) {
+                    // Preserve folder structure by replacing the original filename with the new name
+                    const originalPath = file.webkitRelativePath.substring(0, file.webkitRelativePath.lastIndexOf('/') + 1);
+                    folder.file(originalPath + newName, fileData);
+                } else {
+                    folder.file(newName, fileData);
+                }
                 statusSpan.textContent = `Processed ${i + 1} of ${files.length} files...`;
             } catch (error) {
                 console.error(`Error processing file ${file.name}:`, error);
