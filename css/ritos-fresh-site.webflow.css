@@ -5547,6 +5547,10 @@ a {
   display: flex;
 }
 
+.video {
+  width: 100%;
+}
+
 @media screen and (max-width: 991px) {
   h2 {
     font-size: 34px;
