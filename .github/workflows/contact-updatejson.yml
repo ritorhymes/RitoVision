@@ -10,13 +10,16 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Check out the repository
+      # Step 1: Check out the repository with all branches
       - name: Check out repository
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0       # Fetch all history
+          fetch-tags: true     # Fetch all tags
 
-      # Step 2: Fetch the Utilities branch
-      - name: Fetch Utilities branch
-        run: git fetch origin Utilities
+      # Step 2: Verify Git Remotes (Optional for debugging)
+      - name: Verify Git Remotes
+        run: git remote -v
 
       # Step 3: Check if contact.html exists
       - name: Check for contact.html
@@ -34,11 +37,12 @@ jobs:
       - name: Inject JSON-LD
         if: env.found_file == 'true'
         run: |
-          # Fetch the contact.json file from the Utilities branch
-          git show origin/Utilities:contact.json > contact.json
+          # Attempt to fetch contact.json from Utilities branch
+          if git show origin/Utilities:contact.json > contact.json; then
+            echo "Fetched contact.json successfully."
 
-          # Replace the <script> tag in contact.html with the JSON-LD content
-          python3 -c "
+            # Replace the <script> tag in contact.html with the JSON-LD content
+            python3 -c "
 import os
 import re
 if os.path.exists('contact.html'):
@@ -59,7 +63,11 @@ if os.path.exists('contact.html'):
         print('No matching <script> tag found, no changes made.')
 else:
     print('contact.html not found, skipping injection.')
-          "
+            "
+          else
+            echo "contact.json not found in Utilities branch, skipping injection."
+            exit 0
+          fi
 
       # Step 5: Commit and push changes only if contact.html was updated
       - name: Commit and push changes
