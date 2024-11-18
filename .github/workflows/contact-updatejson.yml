@@ -31,6 +31,7 @@ jobs:
           else
             echo "contact.html exists."
             echo "found_file=true" >> $GITHUB_ENV
+          fi
 
       # Step 4: Fetch and replace JSON-LD only if contact.html exists
       - name: Inject JSON-LD
