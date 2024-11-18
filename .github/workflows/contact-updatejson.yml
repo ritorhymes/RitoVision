@@ -42,10 +42,10 @@ jobs:
           # Read the JSON-LD content
           JSON_LD=$(cat json-ld/contact.json)
 
-          # Replace the existing script tag with the JSON-LD content
-          sed -i.bak \
-              "s|<script type=\"application/ld+json\" src=\"contact.json\"></script>|<script type=\"application/ld+json\">${JSON_LD}</script>|" \
-              contact.html
+          # Use perl to perform the substitution
+          perl -0777 -i.bak -pe \
+            "s|<script type=\"application/ld\\+json\" src=\"contact\\.json\"></script>|<script type=\"application/ld+json\">${JSON_LD}</script>|s" \
+            contact.html
 
           echo "Injected JSON-LD into contact.html:"
           cat contact.html
@@ -56,6 +56,10 @@ jobs:
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add contact.html || echo "No changes to commit."
-          git commit -m "Inject JSON-LD from json-ld/contact.json into contact.html" || echo "No changes to commit."
-          git push || echo "Nothing to push."
+          git add contact.html
+          if git diff-index --quiet HEAD; then
+            echo "No changes to commit."
+          else
+            git commit -m "Inject JSON-LD from json-ld/contact.json into contact.html"
+            git push
+          fi
