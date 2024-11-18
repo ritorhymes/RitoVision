@@ -64,13 +64,13 @@ jobs:
               continue
             fi
 
-            # Read the JSON-LD content
-            JSON_LD=$(cat "$json_file")
-
             # Use perl to perform the substitution
-            perl -0777 -i.bak -pe \
-              "s|<script type=\"application/ld\\+json\" src=\"/json-ld/${base_name}\\.json\"></script>|<script type=\"application/ld+json\">${JSON_LD}</script>|s" \
-              "$html_file"
+            perl -0777 -i.bak -pe '
+              s|<script type="application/ld\+json" src="/json-ld/'"$base_name"'\.json"></script>|
+                my $json_ld_content = do { local $/; open my $fh, "<", "'"$json_file"'"; <$fh> };
+                "<script type=\"application/ld+json\">$json_ld_content</script>"
+              |gse
+            ' "$html_file"
 
             echo "Injected JSON-LD into $html_file"
           done
