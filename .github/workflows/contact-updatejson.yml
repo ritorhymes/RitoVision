@@ -17,11 +17,7 @@ jobs:
           fetch-depth: 0       # Fetch all history
           fetch-tags: true     # Fetch all tags
 
-      # Step 2: Fetch the Utilities branch
-      - name: Fetch Utilities branch
-        run: git fetch origin Utilities:Utilities
-
-      # Step 3: Check if contact.html exists
+      # Step 2: Check if contact.html exists
       - name: Check for contact.html
         id: check_contact
         run: |
@@ -33,44 +29,33 @@ jobs:
             echo "found_file=true" >> $GITHUB_ENV
           fi
 
-      # Step 4: Debug content before replacement
-      - name: Print contact.html content (before modification)
-        if: env.found_file == 'true'
-        run: cat contact.html
-
-      # Step 5: Fetch and replace JSON-LD
+      # Step 3: Inject JSON-LD into contact.html
       - name: Inject JSON-LD
         if: env.found_file == 'true'
         run: |
-          # Fetch contact.json from the Utilities branch
-          if git show Utilities:contact.json > contact.json; then
-            echo "Fetched contact.json successfully."
-
-            # Read JSON-LD content
-            JSON_LD=$(cat contact.json)
-
-            # Replace <script> tag with JSON-LD content
-            sed -i.bak \
-                "s|<script type=\"application/ld+json\" src=\"contact.json\"></script>|<script type=\"application/ld+json\">${JSON_LD}</script>|" \
-                contact.html
-
-            echo "Modified contact.html:"
-            cat contact.html
-          else
-            echo "contact.json not found in Utilities branch, skipping injection."
+          # Verify that the JSON-LD file exists
+          if [ ! -f json-ld/contact.json ]; then
+            echo "json-ld/contact.json not found, skipping injection."
+            exit 1
           fi
 
-      # Step 6: Print content after modification
-      - name: Print contact.html content (after modification)
-        if: env.found_file == 'true'
-        run: cat contact.html
+          # Read the JSON-LD content
+          JSON_LD=$(cat json-ld/contact.json)
 
-      # Step 7: Commit and push changes
+          # Replace the existing script tag with the JSON-LD content
+          sed -i.bak \
+              "s|<script type=\"application/ld+json\" src=\"contact.json\"></script>|<script type=\"application/ld+json\">${JSON_LD}</script>|" \
+              contact.html
+
+          echo "Injected JSON-LD into contact.html:"
+          cat contact.html
+
+      # Step 4: Commit and push changes
       - name: Commit and push changes
         if: env.found_file == 'true'
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add contact.html || echo "No changes to commit."
-          git commit -m "Inject JSON-LD from Utilities/contact.json into contact.html" || echo "No changes to commit."
+          git commit -m "Inject JSON-LD from json-ld/contact.json into contact.html" || echo "No changes to commit."
           git push || echo "Nothing to push."
