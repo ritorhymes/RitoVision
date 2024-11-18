@@ -17,9 +17,9 @@ jobs:
           fetch-depth: 0       # Fetch all history
           fetch-tags: true     # Fetch all tags
 
-      # Step 2: Verify Git Remotes (Optional for debugging)
-      - name: Verify Git Remotes
-        run: git remote -v
+      # Step 2: Fetch the Utilities branch
+      - name: Fetch Utilities branch
+        run: git fetch origin Utilities:Utilities
 
       # Step 3: Check if contact.html exists
       - name: Check for contact.html
@@ -33,26 +33,39 @@ jobs:
             echo "found_file=true" >> $GITHUB_ENV
           fi
 
-      # Step 4: Fetch and replace JSON-LD only if contact.html exists
+      # Step 4: Debug content before replacement
+      - name: Print contact.html content (before modification)
+        if: env.found_file == 'true'
+        run: cat contact.html
+
+      # Step 5: Fetch and replace JSON-LD
       - name: Inject JSON-LD
         if: env.found_file == 'true'
         run: |
           # Fetch contact.json from the Utilities branch
-          if git show origin/Utilities:contact.json > contact.json; then
+          if git show Utilities:contact.json > contact.json; then
             echo "Fetched contact.json successfully."
 
-            # Replace the script tag in contact.html with the JSON-LD content
+            # Read JSON-LD content
             JSON_LD=$(cat contact.json)
+
+            # Replace <script> tag with JSON-LD content
             sed -i.bak \
                 "s|<script type=\"application/ld+json\" src=\"contact.json\"></script>|<script type=\"application/ld+json\">${JSON_LD}</script>|" \
                 contact.html
 
-            echo "Injected JSON-LD into contact.html."
+            echo "Modified contact.html:"
+            cat contact.html
           else
             echo "contact.json not found in Utilities branch, skipping injection."
           fi
 
-      # Step 5: Commit and push changes only if contact.html was updated
+      # Step 6: Print content after modification
+      - name: Print contact.html content (after modification)
+        if: env.found_file == 'true'
+        run: cat contact.html
+
+      # Step 7: Commit and push changes
       - name: Commit and push changes
         if: env.found_file == 'true'
         run: |
