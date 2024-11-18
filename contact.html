@@ -23,7 +23,31 @@
   <link href="images/webclip.png" rel="apple-touch-icon">
 
 
-  <script type="application/ld+json" src="contact.json"></script>
+  <script type="application/ld+json">    {
+      "": "https://schema.org",
+      "": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://ritovision.com"
+        },
+        {
+          "": "ListItem",
+          "position": 2,
+          "name": "Contact",
+          "item": {
+            "": "ContactPage",
+            "mainEntityOfPage": "https://ritovision.com/contact",
+            "name": "Contact RitoVision",
+            "keywords": "contact, RitoVision, Rito",
+            "description": "Submit inquiries and support requests to RitoVision through our contact form.",
+            "url": "https://ritovision.com/contact"
+          }
+        }
+      ]
+    }</script>
 
   <style>
     @media (min-width: 479px) {
