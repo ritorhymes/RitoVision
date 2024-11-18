@@ -1,0 +1,72 @@
+name: Inject JSON-LD into Contact HTML
+
+on:
+  push:
+    branches:
+      - main  # Trigger on changes to the main branch
+
+jobs:
+  inject-json-ld:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Check out the repository
+      - name: Check out repository
+        uses: actions/checkout@v3
+
+      # Step 2: Fetch the Utilities branch
+      - name: Fetch Utilities branch
+        run: git fetch origin Utilities
+
+      # Step 3: Check if contact.html exists
+      - name: Check for contact.html
+        id: check_contact
+        run: |
+          if [ ! -f contact.html ]; then
+            echo "contact.html not found, skipping workflow."
+            echo "found_file=false" >> $GITHUB_ENV
+          else
+            echo "contact.html exists."
+            echo "found_file=true" >> $GITHUB_ENV
+          fi
+
+      # Step 4: Fetch and replace JSON-LD only if contact.html exists
+      - name: Inject JSON-LD
+        if: env.found_file == 'true'
+        run: |
+          # Fetch the contact.json file from the Utilities branch
+          git show origin/Utilities:contact.json > contact.json
+
+          # Replace the <script> tag in contact.html with the JSON-LD content
+          python3 -c "
+import os
+import re
+if os.path.exists('contact.html'):
+    with open('contact.html', 'r') as f:
+        content = f.read()
+    with open('contact.json', 'r') as f:
+        json_ld = f.read()
+    updated_content = re.sub(
+        r'<script type=\"application/ld\+json\" src=\"contact\.json\"></script>',
+        f'<script type=\"application/ld+json\">{json_ld}</script>',
+        content
+    )
+    if updated_content != content:
+        with open('contact.html', 'w') as f:
+            f.write(updated_content)
+        print('JSON-LD injected into contact.html')
+    else:
+        print('No matching <script> tag found, no changes made.')
+else:
+    print('contact.html not found, skipping injection.')
+          "
+
+      # Step 5: Commit and push changes only if contact.html was updated
+      - name: Commit and push changes
+        if: env.found_file == 'true'
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add contact.html || echo "No changes to commit."
+          git commit -m "Inject JSON-LD from Utilities/contact.json into contact.html" || echo "No changes to commit."
+          git push || echo "Nothing to push."
