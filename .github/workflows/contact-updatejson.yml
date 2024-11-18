@@ -3,14 +3,14 @@ name: Inject JSON-LD into Contact HTML
 on:
   push:
     branches:
-      - main  # Trigger on changes to the main branch
+      - main
 
 jobs:
   inject-json-ld:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Check out the repository with all branches
+      # Step 1: Check out the repository
       - name: Check out repository
         uses: actions/checkout@v3
         with:
@@ -31,42 +31,24 @@ jobs:
           else
             echo "contact.html exists."
             echo "found_file=true" >> $GITHUB_ENV
-          fi
 
       # Step 4: Fetch and replace JSON-LD only if contact.html exists
       - name: Inject JSON-LD
         if: env.found_file == 'true'
         run: |
-          # Attempt to fetch contact.json from Utilities branch
+          # Fetch contact.json from the Utilities branch
           if git show origin/Utilities:contact.json > contact.json; then
             echo "Fetched contact.json successfully."
 
-            # Replace the <script> tag in contact.html with the JSON-LD content
-            python3 -c "
-import os
-import re
-if os.path.exists('contact.html'):
-    with open('contact.html', 'r') as f:
-        content = f.read()
-    with open('contact.json', 'r') as f:
-        json_ld = f.read()
-    updated_content = re.sub(
-        r'<script type=\"application/ld\+json\" src=\"contact\.json\"></script>',
-        f'<script type=\"application/ld+json\">{json_ld}</script>',
-        content
-    )
-    if updated_content != content:
-        with open('contact.html', 'w') as f:
-            f.write(updated_content)
-        print('JSON-LD injected into contact.html')
-    else:
-        print('No matching <script> tag found, no changes made.')
-else:
-    print('contact.html not found, skipping injection.')
-            "
+            # Replace the script tag in contact.html with the JSON-LD content
+            JSON_LD=$(cat contact.json)
+            sed -i.bak \
+                "s|<script type=\"application/ld+json\" src=\"contact.json\"></script>|<script type=\"application/ld+json\">${JSON_LD}</script>|" \
+                contact.html
+
+            echo "Injected JSON-LD into contact.html."
           else
             echo "contact.json not found in Utilities branch, skipping injection."
-            exit 0
           fi
 
       # Step 5: Commit and push changes only if contact.html was updated
