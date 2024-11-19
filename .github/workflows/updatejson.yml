@@ -68,7 +68,7 @@ jobs:
             perl -0777 -i.bak -pe '
               s|<script type="application/ld\+json" src="/json-ld/'"$base_name"'\.json"></script>|
                 my $json_ld_content = do { local $/; open my $fh, "<", "'"$json_file"'"; <$fh> };
-                "<script type=\"application/ld+json\">$json_ld_content</script>"
+                $json_ld_content
               |gse
             ' "$html_file"
 
