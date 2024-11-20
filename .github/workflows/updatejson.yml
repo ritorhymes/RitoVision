@@ -83,7 +83,9 @@ jobs:
 
             # Use perl to replace href="page.html" with href="https://ritovision.com[/page]"
             perl -i.bak -pe '
-              s|href="([^\"]+)\.html"|href="https://ritovision.com".($1 eq "index" ? "" : "/$1")|ge
+              s|href="([^"]+)\.html"|
+                "href=\"https://ritovision.com" . ($1 eq "index" ? "" : "/$1") . "\""
+              |ge
             ' "$html_file"
 
             echo "Replaced relative links in $html_file"
