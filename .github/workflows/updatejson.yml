@@ -81,9 +81,9 @@ jobs:
           for html_file in *.html; do
             echo "Processing $html_file for relative links"
 
-            # Use perl to replace <a href="page.html" with <a href="https://ritovision.com/page"
+            # Use perl to replace href="page.html" with href="https://ritovision.com/page"
             perl -i.bak -pe '
-              s|<a\s+href="([a-zA-Z0-9_-]+)\.html"|<a href="https://ritovision.com/$1"|g
+              s|href="([^\"]+)\.html"|href="https://ritovision.com/$1"|g
             ' "$html_file"
 
             echo "Replaced relative links in $html_file"
