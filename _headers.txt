@@ -1,0 +1,3 @@
+https://ritovision.com/*
+  Content-Security-Policy: default-src *; frame-ancestors 'self' https://ritography.com https://ritorhymes.com;
+  Referrer-Policy: unsafe-url
