@@ -2257,6 +2257,7 @@ a {
   border-width: 15px 1px 1px 20px;
   height: 500px;
   box-shadow: 8px 9px 5px #0003, 0 4px 24px #96a3b514;
+  object-fit: cover;
 }
 
 .shadow-two-2.aca {
