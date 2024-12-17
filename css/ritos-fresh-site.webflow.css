@@ -2330,7 +2330,7 @@ a {
   margin: 8vw 20px auto 40px;
   font-family: Agency FB, sans-serif;
   font-size: 3.5vw;
-  line-height: 100%;
+  line-height: 110%;
 }
 
 .heading-10.vreeland {
@@ -3702,13 +3702,14 @@ a {
 }
 
 .link-block-8.websites {
+  color: #fff;
   border: 2px solid #0000;
   border-top-left-radius: 20px;
   height: 100%;
 }
 
 .link-block-8.websites:hover {
-  color: #211d6f;
+  color: #000;
   background-color: #211d6f00;
   border: 2px solid #211d6f;
 }
@@ -3724,6 +3725,7 @@ a {
 }
 
 .paragraph-17.websites {
+  height: 100%;
   margin-bottom: 0;
 }
 
@@ -3732,6 +3734,7 @@ a {
 }
 
 .paragraph-17.apps {
+  height: 100%;
   margin-bottom: 0;
 }
 
@@ -3741,6 +3744,7 @@ a {
 }
 
 .paragraph-17.games {
+  height: 100%;
   margin-bottom: 0;
 }
 
@@ -3773,6 +3777,7 @@ a {
   height: 100%;
   margin-top: auto;
   margin-bottom: auto;
+  transition: all .5s;
   display: flex;
 }
 
@@ -3856,7 +3861,8 @@ a {
   height: 70px;
   margin: auto auto 10%;
   display: flex;
-  position: relative;
+  position: absolute;
+  inset: auto 0% 0%;
 }
 
 .div-block-59:hover {
@@ -3867,12 +3873,14 @@ a {
 
 .div-block-60 {
   border-radius: 40px;
+  flex-flow: column;
   justify-content: center;
   width: 400px;
   height: 400px;
   margin-left: auto;
   margin-right: auto;
   display: flex;
+  position: relative;
   overflow: hidden;
 }
 
@@ -3900,6 +3908,10 @@ a {
   margin-left: auto;
   margin-right: auto;
   display: flex;
+}
+
+.link-block-11 {
+  transition: all .3s;
 }
 
 .dropdown-toggle {
@@ -4947,25 +4959,33 @@ a {
   grid-column-gap: 2rem;
   grid-row-gap: 2rem;
   flex-direction: column;
+  align-self: center;
+  align-items: center;
+  width: 872.391px;
   margin-bottom: 14rem;
+  margin-left: auto;
+  margin-right: auto;
   display: flex;
   position: relative;
 }
 
 .div-block-71 {
-  width: 60%;
-  margin-top: 5%;
+  flex-flow: column;
+  align-self: center;
+  width: 90%;
+  margin-top: 15%;
   margin-left: auto;
   margin-right: auto;
+  display: flex;
   position: relative;
 }
 
 .heading-36 {
   color: var(--black);
   text-align: center;
-  margin-top: 0;
-  margin-bottom: 5%;
+  margin: 0 auto 5%;
   font-size: 60px;
+  text-decoration: underline;
   position: sticky;
   top: 2%;
 }
@@ -5634,6 +5654,198 @@ a {
   height: 100%;
   position: absolute;
   overflow: hidden;
+}
+
+.div-block-81 {
+  color: #fff;
+  justify-content: center;
+  align-items: stretch;
+  margin-bottom: 10%;
+  display: flex;
+  position: relative;
+}
+
+.div-block-82 {
+  z-index: 2;
+  background-color: #012035;
+  border-radius: 40px;
+  flex-flow: column;
+  width: 90%;
+  height: auto;
+  padding: 2% 5%;
+  display: flex;
+  position: relative;
+}
+
+.paragraph-43 {
+  color: #fff;
+  margin-bottom: 0;
+}
+
+.div-block-83 {
+  color: #fff;
+  background-color: #000;
+  border-radius: 30px;
+  width: 400px;
+  height: 200px;
+  margin-left: auto;
+  margin-right: auto;
+  position: sticky;
+  top: 10%;
+}
+
+.co-brand-heading {
+  color: #fff;
+  background-color: #000;
+  border-radius: 30px;
+  flex-flow: column;
+  justify-content: center;
+  align-items: center;
+  width: 400px;
+  height: 200px;
+  margin-left: auto;
+  margin-right: auto;
+  display: flex;
+  position: relative;
+  top: auto;
+}
+
+.co-brandhead {
+  color: #fff;
+  align-self: center;
+  margin-top: 0;
+  margin-bottom: 0;
+  font-size: 70px;
+  line-height: 40px;
+}
+
+.co-brandhead.g {
+  margin-top: 5%;
+}
+
+.div-block-84 {
+  flex-flow: column;
+  height: 1000px;
+  display: flex;
+  position: sticky;
+  top: 10%;
+}
+
+.co-brand-logo {
+  color: #fff;
+  background-color: #000;
+  border-radius: 30px;
+  flex-flow: column;
+  justify-content: center;
+  align-items: center;
+  width: 400px;
+  height: 150px;
+  margin-top: 5%;
+  margin-left: auto;
+  margin-right: 0;
+  display: flex;
+  position: relative;
+  top: auto;
+}
+
+.ritography-copy {
+  width: 350px;
+}
+
+.ritorhymes-copy {
+  width: 350px;
+  padding-left: 50px;
+  padding-right: 50px;
+}
+
+.div-block-85 {
+  grid-column-gap: 50px;
+  grid-row-gap: 50px;
+  flex-flow: wrap;
+  justify-content: center;
+  align-self: center;
+  align-items: stretch;
+  width: 100%;
+  display: flex;
+}
+
+.co-brand-logo1 {
+  color: #fff;
+  background-color: #000;
+  border-radius: 30px;
+  flex-flow: column;
+  justify-content: center;
+  align-items: center;
+  width: 400px;
+  height: 150px;
+  margin-top: 5%;
+  margin-left: auto;
+  margin-right: auto;
+  display: flex;
+  position: relative;
+  top: auto;
+}
+
+.ritovision2 {
+  border-radius: 20px;
+  width: 350px;
+  margin-bottom: 5%;
+}
+
+.co-brand-logo2 {
+  color: #fff;
+  background-color: #000;
+  border-radius: 30px;
+  flex-flow: column;
+  justify-content: center;
+  align-items: center;
+  width: 400px;
+  height: 150px;
+  margin-top: 5%;
+  margin-left: 0;
+  margin-right: auto;
+  display: flex;
+  position: relative;
+  top: auto;
+}
+
+.button-21 {
+  text-align: center;
+  background-color: #3898ec00;
+  border: 2px solid #fff;
+  border-radius: 40px;
+  align-self: center;
+  width: 400px;
+  height: 50px;
+  margin-top: 2%;
+  font-size: 30px;
+  line-height: 30px;
+  transition: all .3s;
+}
+
+.button-21:hover {
+  background-color: #012035;
+  border-color: #012035;
+}
+
+.image-84 {
+  z-index: 1;
+  opacity: 0;
+  border-radius: 40px;
+  align-self: auto;
+  width: 400px;
+  position: absolute;
+}
+
+.image-78-copy {
+  border-radius: 40px;
+  width: 100%;
+  height: 400px;
+  position: relative;
+}
+
+.text-span-16 {
+  font-size: 40px;
 }
 
 @media screen and (max-width: 991px) {
@@ -6333,6 +6545,11 @@ a {
     align-items: center;
   }
 
+  .div-block-60 {
+    justify-content: center;
+    align-items: flex-start;
+  }
+
   .link-block-10 {
     align-self: center;
     align-items: center;
@@ -6440,12 +6657,25 @@ a {
     overflow: visible;
   }
 
+  .image-78 {
+    align-self: center;
+    position: relative;
+  }
+
   .icon-3-copy-copy {
     color: #fff;
     text-align: left;
     border: 0 solid #fff;
     border-radius: 7px;
     font-size: 60px;
+  }
+
+  .card.is-three {
+    height: 600px;
+  }
+
+  .cards_wrapper {
+    width: auto;
   }
 
   .div-block-71 {
@@ -6523,6 +6753,32 @@ a {
     background-position: 50%;
     background-size: cover;
     width: 50%;
+  }
+
+  .co-brandhead {
+    font-size: 60px;
+    line-height: 40px;
+  }
+
+  .co-brand-logo {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .div-block-85 {
+    grid-column-gap: 0px;
+    grid-row-gap: 0px;
+    flex-flow: column;
+  }
+
+  .co-brand-logo2 {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .image-78-copy {
+    align-self: center;
+    position: relative;
   }
 }
 
@@ -8058,7 +8314,7 @@ a {
   }
 
   .link-block-8.websites {
-    border-top-left-radius: 0;
+    border-top-left-radius: 30px;
     height: 100%;
   }
 
@@ -8128,7 +8384,8 @@ a {
 
   .div-block-60 {
     align-items: center;
-    width: auto;
+    width: 100%;
+    height: auto;
   }
 
   .link-block-10 {
@@ -8731,6 +8988,7 @@ a {
 
   .div-block-71 {
     width: 100%;
+    margin-top: 25%;
     margin-bottom: 20%;
   }
 
@@ -9015,6 +9273,72 @@ a {
     width: 100%;
     height: auto;
     min-height: 300px;
+  }
+
+  .div-block-82 {
+    padding-top: 10%;
+    padding-bottom: 10%;
+  }
+
+  .co-brand-heading {
+    width: 90%;
+    height: 170px;
+    margin-top: 5%;
+  }
+
+  .co-brandhead {
+    font-size: 6vh;
+    line-height: 40px;
+  }
+
+  .co-brandhead.g {
+    width: 40%;
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+
+  .co-brand-logo {
+    width: 90%;
+    height: 100px;
+  }
+
+  .ritography-copy {
+    width: 80%;
+  }
+
+  .ritorhymes-copy {
+    width: 50%;
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .co-brand-logo1.w--current {
+    width: 90%;
+    height: 100px;
+  }
+
+  .ritovision2 {
+    align-self: center;
+    width: 80%;
+    margin-bottom: 5%;
+  }
+
+  .co-brand-logo2 {
+    width: 90%;
+    height: 100px;
+  }
+
+  .button-21 {
+    width: 100%;
+  }
+
+  .image-84 {
+    top: 40%;
+  }
+
+  .image-78-copy {
+    width: auto;
+    height: auto;
   }
 }
 
