@@ -1,0 +1,54 @@
+name: Check and Inject HTML Lang Attribute
+
+on:
+  # Add the `workflow_dispatch` event for manual triggers
+  workflow_dispatch:
+    inputs:
+      custom_message:
+        description: "Optional message for the workflow run"
+        required: false
+        default: "Triggered manually"
+
+  # Keep the existing `push` trigger if you want to keep it
+  push:
+    paths:
+      - '**/*.html' # Trigger only when HTML files are pushed
+
+jobs:
+  check-inject-lang:
+    runs-on: ubuntu-latest
+
+    steps:
+    # Step 1: Checkout the repository
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    # Step 2: Find and fix HTML files
+    - name: Check and Fix HTML Files
+      run: |
+        # Loop through all HTML files in the repository
+        for file in $(find . -type f -name "*.html"); do
+          if grep -q "<html" "$file"; then
+            if ! grep -q '<html[^>]*lang="' "$file"; then
+              echo "Fixing $file: Adding lang=\"en\" to <html> tag."
+              sed -i 's/<html/<html lang="en"/' "$file"
+            else
+              echo "Skipping $file: <html> already has a lang attribute."
+            fi
+          else
+            echo "Skipping $file: No <html> tag found."
+          fi
+        done
+
+    # Step 3: Commit the changes (if any)
+    - name: Commit Changes
+      run: |
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+        git add .
+        if git diff --cached --quiet; then
+          echo "No changes to commit."
+        else
+          git commit -m "Fix: Inject lang=\"en\" attribute into <html> tags"
+          git push
+        fi
