@@ -1,9 +1,18 @@
 name: Check and Inject HTML Lang Attribute
 
 on:
+  # Add the `workflow_dispatch` event for manual triggers
+  workflow_dispatch:
+    inputs:
+      custom_message:
+        description: "Manually injecting"
+        required: false
+        default: "Triggered manually"
+
+  # Keep the existing `push` trigger if you want to keep it
   push:
     paths:
-      - '**/*.html' # Run the workflow only for HTML files
+      - '**/*.html' # Trigger only when HTML files are pushed
 
 jobs:
   check-inject-lang:
